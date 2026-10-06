@@ -1,0 +1,259 @@
+<!-- templates/core/base2.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Espace Chauffeur{% endblock %}</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Config Tailwind personnalisée -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        driver: {
+                            50:  '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Police Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        .nav-link { transition: all .2s ease; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-down { animation: slideDown .2s ease-out; }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <!-- ============================================ -->
+    <!-- NAVBAR CHAUFFEUR                              -->
+    <!-- ============================================ -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+
+                <!-- Logo + nom -->
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'bus_tracking:driver_list' %}" class="flex items-center gap-2 group">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-xl shadow-sm group-hover:scale-105 transition-transform">
+                            🚌
+                        </div>
+                        <div class="hidden sm:block">
+                            <div class="font-bold text-slate-800 leading-tight">Espace Chauffeur</div>
+                            <div class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Bus Tracking</div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation desktop -->
+                <nav class="hidden md:flex items-center gap-1">
+                    <a href="{% url 'bus_tracking:driver_list' %}"
+                       class="nav-link flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium
+                              {% if request.resolver_match.url_name == 'driver_list' %}
+                                  bg-blue-50 text-blue-700
+                              {% else %}
+                                  text-slate-600 hover:bg-slate-100 hover:text-slate-900
+                              {% endif %}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                        </svg>
+                        Sélection du bus
+                    </a>
+
+                    <a href="{% url 'bus_tracking:driver_dashboard' %}"
+                       class="nav-link flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium
+                              {% if request.resolver_match.url_name == 'driver_dashboard' %}
+                                  bg-blue-50 text-blue-700
+                              {% else %}
+                                  text-slate-600 hover:bg-slate-100 hover:text-slate-900
+                              {% endif %}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                </nav>
+
+                <!-- Utilisateur + déconnexion (desktop) -->
+                <div class="hidden md:flex items-center gap-3">
+                    {% if user.is_authenticated %}
+                        <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-xl">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold">
+                                {{ user.username|first|upper }}
+                            </div>
+                            <div class="text-xs">
+                                <div class="font-semibold text-slate-700 leading-tight">
+                                    {% if user.prenom %}{{ user.prenom }}{% else %}{{ user.username }}{% endif %}
+                                </div>
+                                <div class="text-slate-400 leading-tight">
+                                    {% if user.is_superuser %}Superuser{% else %}Chauffeur{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logout en POST (sécurisé) -->
+                        <form method="post" action="{% url 'user:logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="px-3 py-2 text-xs font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors">
+                                Déconnexion
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'user:login' %}?next={{ request.path }}"
+                           class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
+                            Se connecter
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Bouton menu mobile -->
+                <button id="mobileMenuBtn"
+                        class="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors"
+                        aria-label="Menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu mobile -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 bg-white animate-slide-down">
+            <nav class="px-4 py-3 space-y-1">
+                <a href="{% url 'bus_tracking:driver_list' %}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
+                          {% if request.resolver_match.url_name == 'driver_list' %}
+                              bg-blue-50 text-blue-700
+                          {% else %}
+                              text-slate-700 hover:bg-slate-100
+                          {% endif %}">
+                    🚏 Sélection du bus
+                </a>
+                <a href="{% url 'bus_tracking:driver_dashboard' %}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
+                          {% if request.resolver_match.url_name == 'driver_dashboard' %}
+                              bg-blue-50 text-blue-700
+                          {% else %}
+                              text-slate-700 hover:bg-slate-100
+                          {% endif %}">
+                    📊 Dashboard
+                </a>
+
+                {% if user.is_authenticated %}
+                    <div class="border-t border-slate-100 my-2"></div>
+                    <div class="px-4 py-2 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <div class="text-sm">
+                            <div class="font-semibold text-slate-700">
+                                {% if user.prenom %}{{ user.prenom }}{% else %}{{ user.username }}{% endif %}
+                            </div>
+                            <div class="text-xs text-slate-400">
+                                {% if user.is_superuser %}Superuser{% else %}Chauffeur{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logout mobile en POST -->
+                    <form method="post" action="{% url 'user:logout' %}" class="block">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50">
+                            🚪 Déconnexion
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'user:login' %}?next={{ request.path }}"
+                       class="block px-4 py-3 rounded-xl text-sm font-medium text-blue-600 hover:bg-blue-50">
+                        🔐 Se connecter
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- CONTENU                                       -->
+    <!-- ============================================ -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        {% block header %}
+        {% if header_title %}
+            <div class="mb-6">
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-800">{{ header_title }}</h1>
+            </div>
+        {% endif %}
+        {% endblock %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ============================================ -->
+    <!-- FOOTER                                        -->
+    <!-- ============================================ -->
+    <footer class="border-t border-slate-200 bg-white mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+            <div>© {% now "Y" %} Bus Tracking — Espace Chauffeur</div>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span>Système actif</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS du menu mobile -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('mobileMenuBtn');
+            const menu = document.getElementById('mobileMenu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

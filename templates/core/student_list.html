@@ -1,0 +1,289 @@
+<!-- templates/student_list.html -->
+{% extends 'core/base.html' %}
+
+{% block title %}Étudiant - Liste des bus{% endblock %}
+
+{% block header_title %}🎓 Bus disponibles{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto space-y-4 pb-12">
+    
+    <!-- SECTION HERO : Carte de bienvenue & Recherche -->
+    <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 text-white rounded-3xl p-5 shadow-xl border border-indigo-500/20 relative overflow-hidden">
+        <!-- Cercle décoratif d'arrière-plan -->
+        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="flex items-center justify-between mb-3 relative z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600/50 backdrop-blur-md border border-indigo-400/30 flex items-center justify-center text-amber-400 shadow-inner">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight text-white leading-tight">Bonjour ! 👋</h1>
+                    <p class="text-[11px] text-indigo-200/80 font-medium">Où souhaitez-vous aller aujourd'hui ?</p>
+                </div>
+            </div>
+            
+            <button onclick="loadBuses()" title="Rafraîchir" class="p-2.5 bg-white/10 hover:bg-white/20 active:scale-95 text-indigo-200 hover:text-white rounded-xl backdrop-blur-md border border-white/10 transition-all">
+                <i class="fa-solid fa-rotate text-xs"></i>
+            </button>
+        </div>
+
+        <!-- Barre de recherche interactive -->
+        <div class="relative mt-4 z-10">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-indigo-300 text-xs"></i>
+            <input type="text" 
+                   id="busSearchInput"
+                   onkeyup="filterBuses()"
+                   placeholder="Rechercher une ligne, un bus..." 
+                   class="w-full pl-10 pr-4 py-2.5 bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl text-xs text-white placeholder-indigo-200/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white/20 transition-all">
+        </div>
+
+        <!-- Informations de statut rapide -->
+        <div class="flex items-center justify-between text-[10px] text-indigo-200/70 mt-3 pt-3 border-t border-white/10 z-10 relative">
+            <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-satellite-dish text-emerald-400"></i>
+                Signal GPS en direct
+            </span>
+            <span class="font-mono" id="lastUpdate">Mise à jour: --:--:--</span>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides (Badges réorganisés) -->
+    <div class="grid grid-cols-4 gap-2">
+        <div class="bg-white rounded-2xl border border-slate-100 p-2.5 text-center shadow-sm">
+            <div class="text-base font-black text-slate-800 flex items-center justify-center gap-1">
+                <i class="fa-solid fa-bus text-xs text-slate-400"></i>
+                <span id="totalBuses">0</span>
+            </div>
+            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Total</div>
+        </div>
+
+        <div class="bg-emerald-50/50 rounded-2xl border border-emerald-100 p-2.5 text-center shadow-sm">
+            <div class="text-base font-black text-emerald-600 flex items-center justify-center gap-1">
+                <i class="fa-solid fa-circle-check text-xs text-emerald-500"></i>
+                <span id="activeBuses">0</span>
+            </div>
+            <div class="text-[9px] text-emerald-700 font-bold uppercase tracking-wider mt-0.5">En service</div>
+        </div>
+
+        <div class="bg-slate-50/80 rounded-2xl border border-slate-100 p-2.5 text-center shadow-sm">
+            <div class="text-base font-black text-slate-400 flex items-center justify-center gap-1">
+                <i class="fa-solid fa-ban text-xs text-slate-400"></i>
+                <span id="inactiveBuses">0</span>
+            </div>
+            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Arrêtés</div>
+        </div>
+
+        <div class="bg-indigo-50/50 rounded-2xl border border-indigo-100 p-2.5 text-center shadow-sm">
+            <div class="text-base font-black text-indigo-600 flex items-center justify-center gap-1">
+                <i class="fa-solid fa-location-crosshairs text-xs text-indigo-500"></i>
+                <span id="withPosition">0</span>
+            </div>
+            <div class="text-[9px] text-indigo-700 font-bold uppercase tracking-wider mt-0.5">Avec GPS</div>
+        </div>
+    </div>
+
+    <!-- Container de la liste -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                <i class="fa-solid fa-list-ul text-indigo-500"></i>
+                Lignes actives
+            </span>
+            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100" id="busCount">0 bus</span>
+        </div>
+
+        <div id="busList" class="divide-y divide-slate-100">
+            <!-- Injecté par JavaScript -->
+            <div class="p-8 text-center text-slate-400">
+                <i class="fa-solid fa-spinner fa-spin text-2xl text-indigo-500 mb-2"></i>
+                <p class="text-sm font-medium text-slate-600">Chargement des bus...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message d'erreur / information -->
+    <div id="alertMessage" class="hidden rounded-2xl p-4 text-xs font-bold shadow-sm transition-all"></div>
+</div>
+
+<script>
+// ============================================
+// ÉTAT
+// ============================================
+let allBuses = [];
+let refreshInterval = null;
+
+// ============================================
+// CHARGER LES BUS
+// ============================================
+async function loadBuses() {
+    try {
+        const response = await fetch('/api/buses/');
+        allBuses = await response.json();
+        renderBusList();
+        updateStats();
+        updateLastUpdate();
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('❌ Erreur de chargement des bus', 'error');
+    }
+}
+
+function renderBusList(filteredData = null) {
+    const container = document.getElementById('busList');
+    const busesToRender = filteredData || allBuses;
+    
+    if (!busesToRender || busesToRender.length === 0) {
+        container.innerHTML = `
+            <div class="p-8 text-center text-slate-400">
+                <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-bus text-xl"></i>
+                </div>
+                <p class="text-sm font-bold text-slate-700">Aucun bus disponible</p>
+                <p class="text-xs text-slate-400 mt-1">Les bus apparaîtront ici dès qu'ils seront en ligne.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Trier: actifs en premier, puis par nom
+    const sorted = [...busesToRender].sort((a, b) => {
+        if (a.is_active !== b.is_active) return a.is_active ? -1 : 1;
+        return a.bus_name.localeCompare(b.bus_name);
+    });
+
+    container.innerHTML = sorted.map(bus => {
+        const hasPosition = bus.lat !== 0 && bus.lng !== 0;
+        const isActive = bus.is_active;
+        
+        return `
+            <div class="p-4 transition-all hover:bg-slate-50/80 ${isActive ? 'bg-white' : 'bg-slate-50/40 opacity-75'}">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-black text-base shadow-sm ${
+                            isActive 
+                                ? 'bg-indigo-600 text-white shadow-indigo-200' 
+                                : 'bg-slate-200 text-slate-500'
+                        }">
+                            <i class="fa-solid fa-bus"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-slate-900 leading-snug">${bus.bus_name}</h3>
+                            <p class="text-[11px] text-slate-400 font-medium flex items-center gap-1 mt-0.5">
+                                <i class="fa-regular fa-clock text-slate-400"></i> ${bus.updated_at || 'À jour'}
+                            </p>
+                        </div>
+                    </div>
+
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${
+                        isActive 
+                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
+                            : 'bg-slate-100 text-slate-500'
+                    }">
+                        <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}"></span>
+                        ${isActive ? 'En service' : 'Arrêté'}
+                    </span>
+                </div>
+
+                <!-- Position GPS -->
+                <div class="my-3 py-2 px-3 bg-slate-50 rounded-xl text-xs flex items-center justify-between text-slate-600 border border-slate-100">
+                    <span class="flex items-center gap-1.5 font-mono text-[11px]">
+                        <i class="fa-solid fa-location-dot ${hasPosition ? 'text-indigo-500' : 'text-slate-300'}"></i>
+                        <strong class="${hasPosition ? 'text-slate-800' : 'text-slate-400 font-normal'}">
+                            ${hasPosition ? `${bus.lat.toFixed(4)}, ${bus.lng.toFixed(4)}` : 'Position inconnue'}
+                        </strong>
+                    </span>
+                    ${hasPosition && isActive ? '<span class="text-[10px] text-emerald-600 bg-emerald-100/60 font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-wifi text-[9px]"></i> GPS On</span>' : ''}
+                </div>
+
+                <!-- Bouton d'action -->
+                <button onclick="viewOnMap('${bus.bus_name}')" 
+                        class="w-full mt-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-[0.98] ${
+                            hasPosition && isActive 
+                                ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200' 
+                                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        }"
+                        ${hasPosition && isActive ? '' : 'disabled'}>
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    ${hasPosition && isActive ? 'Voir sur la carte' : 'Position non disponible'}
+                </button>
+            </div>
+        `;
+    }).join('');
+}
+
+// ============================================
+// FILTRE DE RECHERCHE EN DIRECT
+// ============================================
+function filterBuses() {
+    const query = document.getElementById('busSearchInput').value.toLowerCase().trim();
+    if (!query) {
+        renderBusList();
+        return;
+    }
+    const filtered = allBuses.filter(b => b.bus_name.toLowerCase().includes(query));
+    renderBusList(filtered);
+}
+
+// ============================================
+// STATISTIQUES
+// ============================================
+function updateStats() {
+    const total = allBuses.length;
+    const active = allBuses.filter(b => b.is_active).length;
+    const inactive = total - active;
+    const withPos = allBuses.filter(b => b.lat !== 0 && b.lng !== 0).length;
+    
+    document.getElementById('totalBuses').textContent = total;
+    document.getElementById('activeBuses').textContent = active;
+    document.getElementById('inactiveBuses').textContent = inactive;
+    document.getElementById('withPosition').textContent = withPos;
+    document.getElementById('busCount').textContent = `${total} bus`;
+}
+
+function updateLastUpdate() {
+    const now = new Date();
+    document.getElementById('lastUpdate').textContent = 
+        `Mise à jour: ${now.toLocaleTimeString('fr-FR')}`;
+}
+
+// ============================================
+// REDIRECTION VERS LA CARTE
+// ============================================
+function viewOnMap(busName) {
+    sessionStorage.setItem('selectedBus', busName);
+    window.location.href = `/student/map/?bus=${encodeURIComponent(busName)}`;
+}
+
+// ============================================
+// ALERTES
+// ============================================
+function showAlert(message, type = 'info') {
+    const alert = document.getElementById('alertMessage');
+    alert.textContent = message;
+    alert.className = `rounded-2xl p-4 text-xs font-bold ${
+        type === 'error' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 
+        type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 
+        'bg-indigo-50 text-indigo-700 border border-indigo-200'
+    }`;
+    alert.classList.remove('hidden');
+    
+    setTimeout(() => {
+        alert.classList.add('hidden');
+    }, 5000);
+}
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    loadBuses();
+    refreshInterval = setInterval(loadBuses, 5000);
+});
+
+console.log('🎓 Page étudiante chargée');
+console.log('📡 API: /api/buses/');
+console.log('🔄 Rafraîchissement automatique toutes les 5 secondes');
+</script>
+{% endblock %}

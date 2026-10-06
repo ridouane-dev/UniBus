@@ -1,0 +1,82 @@
+{% extends "user/base_auth.html" %}
+
+{% block title %}Connexion — BusLoc{% endblock %}
+{% block hero_title %}Bon retour à bord 🚌{% endblock %}
+{% block hero_subtitle %}Connectez-vous pour suivre vos bus et vos lignes en direct.{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-navy-800 mb-2">Connexion</h2>
+    <p class="text-gray-500">Accédez à votre tableau de bord BusLoc.</p>
+</div>
+
+<form method="post" class="space-y-5" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Numéro de téléphone -->
+    <div>
+        <label for="{{ form.numero_tel.id_for_label }}" class="block text-sm font-semibold text-navy-800 mb-2">
+            Numéro de téléphone
+        </label>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none z-10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.95.68l1.5 4.49a1 1 0 01-.24 1.05l-2.12 2.12a16 16 0 006.59 6.59l2.12-2.12a1 1 0 011.05-.24l4.49 1.5a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.72 21 3 14.28 3 6V5z"/>
+                </svg>
+            </span>
+            <div class="pl-10">{{ form.numero_tel }}</div>
+        </div>
+        {% if form.numero_tel.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.numero_tel.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Mot de passe -->
+    <div>
+        <div class="flex items-center justify-between mb-2">
+            <label for="{{ form.password.id_for_label }}" class="block text-sm font-semibold text-navy-800">
+                Mot de passe
+            </label>
+            <a href="#" class="text-sm text-navy-600 hover:text-navy-800 font-medium">Mot de passe oublié ?</a>
+        </div>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none z-10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+            </span>
+            <div class="pl-10">{{ form.password }}</div>
+        </div>
+        {% if form.password.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.password.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <div class="flex items-center">
+        <input id="remember" type="checkbox"
+               class="w-4 h-4 text-navy-700 border-gray-300 rounded focus:ring-navy-500">
+        <label for="remember" class="ml-2 text-sm text-gray-600">Rester connecté</label>
+    </div>
+
+    <button type="submit"
+            class="w-full bg-navy-800 hover:bg-navy-900 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+        </svg>
+        Se connecter
+    </button>
+
+    <p class="text-center text-sm text-gray-600 mt-6">
+        Pas encore de compte ?
+        <a href="{% url 'user:register' %}" class="text-navy-700 hover:text-navy-900 font-semibold">
+            Créer un compte BusLoc
+        </a>
+    </p>
+</form>
+{% endblock %}

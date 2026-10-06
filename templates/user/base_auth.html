@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BusLoc — Localisation de bus en temps réel{% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: "#f0f4fa", 100: "#dbe4f0", 200: "#b7c8e0",
+                            300: "#8aa3c9", 400: "#5b7ba9", 500: "#3a5a8a",
+                            600: "#2a456e", 700: "#1e3358", 800: "#162542",
+                            900: "#0f1a30",
+                        },
+                        accent: { 400: "#38bdf8", 500: "#0ea5e9", 600: "#0284c7" },
+                    },
+                    fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+                },
+            },
+        };
+        // tailwind.config.js
+module.exports = {
+  content: ["./templates/**/*.html", "./**/templates/**/*.html"],
+  theme: {
+    extend: {
+      colors: {
+        navy: {
+          50:  "#f0f4fa",
+          100: "#dbe4f0",
+          200: "#b7c8e0",
+          300: "#8aa3c9",
+          400: "#5b7ba9",
+          500: "#3a5a8a",
+          600: "#2a456e",
+          700: "#1e3358",
+          800: "#162542",
+          900: "#0f1a30",
+        },
+        accent: {
+          400: "#38bdf8",
+          500: "#0ea5e9",
+          600: "#0284c7",
+        },
+      },
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+      },
+    },
+  },
+  plugins: [],
+};
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans bg-gradient-to-br from-navy-50 via-white to-navy-100 min-h-screen">
+
+<div class="min-h-screen flex">
+
+    <!-- Panneau gauche (branding BusLoc) -->
+    <div class="hidden lg:flex lg:w-1/2 bg-navy-800 text-white flex-col justify-between p-12 relative overflow-hidden">
+
+        <!-- Lignes de "routes" décoratives -->
+        <svg class="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 600 800">
+            <path d="M-50 200 Q 150 100 300 250 T 650 300" stroke="white" stroke-width="2" fill="none" stroke-dasharray="8 8"/>
+            <path d="M-50 450 Q 200 350 350 500 T 650 550" stroke="white" stroke-width="2" fill="none" stroke-dasharray="8 8"/>
+            <path d="M-50 700 Q 150 600 300 750 T 650 800" stroke="white" stroke-width="2" fill="none" stroke-dasharray="8 8"/>
+        </svg>
+
+        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-navy-700 opacity-40"></div>
+        <div class="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-navy-600 opacity-30"></div>
+
+        <!-- Logo BusLoc -->
+        <div class="relative z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-lg">
+                    <svg class="w-6 h-6 text-navy-800" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 17V7a3 3 0 013-3h10a3 3 0 013 3v10M4 17h16M4 17v2a1 1 0 001 1h2a1 1 0 001-1v-2m10 0v2a1 1 0 001 1h2a1 1 0 001-1v-2M8 7v6h8V7"/>
+                        <circle cx="7.5" cy="14.5" r="1"/>
+                        <circle cx="16.5" cy="14.5" r="1"/>
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight">BusLoc</span>
+                    <span class="block text-[10px] uppercase tracking-[0.2em] text-navy-200">Bus tracking</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Titre -->
+        <div class="relative z-10 max-w-md">
+            <div class="inline-flex items-center gap-2 bg-navy-700/60 backdrop-blur px-3 py-1.5 rounded-full text-xs font-medium mb-6">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-accent-400"></span>
+                </span>
+                Suivi en temps réel
+            </div>
+
+            <h1 class="text-4xl font-extrabold leading-tight mb-6">
+                {% block hero_title %}Localisez vos bus en temps réel, partout.{% endblock %}
+            </h1>
+            <p class="text-navy-100 text-lg leading-relaxed">
+                {% block hero_subtitle %}BusLoc vous permet de suivre chaque bus, d'estimer son arrivée et d'optimiser vos trajets urbains.{% endblock %}
+            </p>
+
+            <div class="grid grid-cols-3 gap-4 mt-10">
+                <div>
+                    <div class="text-2xl font-extrabold">120+</div>
+                    <div class="text-xs text-navy-200 uppercase tracking-wider mt-1">Bus suivis</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-extrabold">15</div>
+                    <div class="text-xs text-navy-200 uppercase tracking-wider mt-1">Lignes</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-extrabold">24/7</div>
+                    <div class="text-xs text-navy-200 uppercase tracking-wider mt-1">Disponible</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative z-10 text-sm text-navy-200">
+            © {% now "Y" %} BusLoc — Tous droits réservés.
+        </div>
+    </div>
+
+    <!-- Panneau droit (formulaire) -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
+        <div class="w-full max-w-md">
+
+            <!-- Logo mobile -->
+            <div class="lg:hidden flex items-center gap-3 mb-8 justify-center">
+                <div class="w-10 h-10 rounded-xl bg-navy-800 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 17V7a3 3 0 013-3h10a3 3 0 013 3v10M4 17h16M4 17v2a1 1 0 001 1h2a1 1 0 001-1v-2m10 0v2a1 1 0 001 1h2a1 1 0 001-1v-2M8 7v6h8V7"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-extrabold text-navy-800">BusLoc</span>
+            </div>
+
+            {% if messages %}
+                <div class="mb-6 space-y-2">
+                    {% for message in messages %}
+                        <div class="px-4 py-3 rounded-lg text-sm {{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+{% extends "user/base_auth.html" %}
+
+{% block title %}Inscription — BusLoc{% endblock %}
+{% block hero_title %}Rejoignez BusLoc aujourd'hui 🚍{% endblock %}
+{% block hero_subtitle %}Créez votre compte et suivez vos bus en temps réel dès maintenant.{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-navy-800 mb-2">Créer un compte</h2>
+    <p class="text-gray-500">Remplissez le formulaire pour commencer à suivre vos bus.</p>
+</div>
+
+<form method="post" class="space-y-5" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="{{ form.prenom.id_for_label }}" class="block text-sm font-semibold text-navy-800 mb-2">
+                Prénom
+            </label>
+            {{ form.prenom }}
+            {% if form.prenom.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.prenom.errors.0 }}</p>
+            {% endif %}
+        </div>
+        <div>
+            <label for="{{ form.nom.id_for_label }}" class="block text-sm font-semibold text-navy-800 mb-2">
+                Nom
+            </label>
+            {{ form.nom }}
+            {% if form.nom.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.nom.errors.0 }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <label for="{{ form.numero_tel.id_for_label }}" class="block text-sm font-semibold text-navy-800 mb-2">
+            Numéro de téléphone
+        </label>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none z-10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.95.68l1.5 4.49a1 1 0 01-.24 1.05l-2.12 2.12a16 16 0 006.59 6.59l2.12-2.12a1 1 0 011.05-.24l4.49 1.5a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.72 21 3 14.28 3 6V5z"/>
+                </svg>
+            </span>
+            <div class="pl-10">{{ form.numero_tel }}</div>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">Ce numéro servira d'identifiant de connexion.</p>
+        {% if form.numero_tel.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.numero_tel.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="{{ form.password.id_for_label }}" class="block text-sm font-semibold text-navy-800 mb-2">
+            Mot de passe
+        </label>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none z-10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+            </span>
+            <div class="pl-10">{{ form.password }}</div>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">Au moins 8 caractères.</p>
+        {% if form.password.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.password.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="{{ form.password_confirm.id_for_label }}" class="block text-sm font-semibold text-navy-800 mb-2">
+            Confirmer le mot de passe
+        </label>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none z-10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </span>
+            <div class="pl-10">{{ form.password_confirm }}</div>
+        </div>
+        {% if form.password_confirm.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.password_confirm.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <div class="flex items-start">
+        <input id="terms" type="checkbox" required
+               class="mt-1 w-4 h-4 text-navy-700 border-gray-300 rounded focus:ring-navy-500">
+        <label for="terms" class="ml-2 text-sm text-gray-600">
+            J'accepte les
+            <a href="#" class="text-navy-700 hover:underline font-medium">conditions d'utilisation</a>
+            et la
+            <a href="#" class="text-navy-700 hover:underline font-medium">politique de confidentialité</a>.
+        </label>
+    </div>
+
+    <button type="submit"
+            class="w-full bg-navy-800 hover:bg-navy-900 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+        </svg>
+        Créer mon compte
+    </button>
+
+    <p class="text-center text-sm text-gray-600 mt-6">
+        Déjà un compte ?
+        <a href="{% url 'user:login' %}" class="text-navy-700 hover:text-navy-900 font-semibold">
+            Se connecter
+        </a>
+    </p>
+</form>
+{% endblock %}
