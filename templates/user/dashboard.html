@@ -1,145 +1,81 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}Tableau de bord — BusLoc{% endblock %}
+{% block title %}Tableau de bord — UniBus{% endblock %}
 
 {% block content %}
 
-<!-- En-tête -->
-<div class="mb-6">
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-navy-800 mb-1">
-        Bonjour {{ user.prenom }} 👋
-    </h1>
-    <p class="text-sm sm:text-base text-gray-600">
-        Suivez vos bus en temps réel.
-    </p>
-</div>
+<!-- ============================================
+     HERO — Présentation
+============================================ -->
+<section class="rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 mb-6 shadow-lg">
 
-<!-- Stats — grid 2 cols mobile, 4 cols desktop -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-navy-100">
-        <div class="flex items-center justify-between mb-3">
-            <span class="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">Bus actifs</span>
-            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-navy-50 flex items-center justify-center">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-navy-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 17V7a3 3 0 013-3h10a3 3 0 013 3v10M4 17h16M4 17v2a1 1 0 001 1h2a1 1 0 001-1v-2m10 0v2a1 1 0 001 1h2a1 1 0 001-1v-2M8 7v6h8V7"/>
-                </svg>
-            </div>
-        </div>
-        <div class="text-2xl sm:text-3xl font-extrabold text-navy-800">24</div>
-        <div class="text-[10px] sm:text-xs text-green-600 font-medium mt-1">+3 depuis 1h</div>
-    </div>
-
-    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-navy-100">
-        <div class="flex items-center justify-between mb-3">
-            <span class="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">Lignes</span>
-            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-navy-50 flex items-center justify-center">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-navy-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                </svg>
-            </div>
-        </div>
-        <div class="text-2xl sm:text-3xl font-extrabold text-navy-800">15</div>
-        <div class="text-[10px] sm:text-xs text-gray-500 font-medium mt-1">Opérationnelles</div>
-    </div>
-
-    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-navy-100">
-        <div class="flex items-center justify-between mb-3">
-            <span class="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">Temps moyen</span>
-            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-navy-50 flex items-center justify-center">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-navy-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-            </div>
-        </div>
-        <div class="text-2xl sm:text-3xl font-extrabold text-navy-800">7 min</div>
-        <div class="text-[10px] sm:text-xs text-gray-500 font-medium mt-1">Entre deux bus</div>
-    </div>
-
-    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-navy-100">
-        <div class="flex items-center justify-between mb-3">
-            <span class="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">Trajets</span>
-            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-navy-50 flex items-center justify-center">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-navy-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
-            </div>
-        </div>
-        <div class="text-2xl sm:text-3xl font-extrabold text-navy-800">142</div>
-        <div class="text-[10px] sm:text-xs text-green-600 font-medium mt-1">+12% vs hier</div>
-    </div>
-</div>
-
-<!-- Carte en direct -->
-<div class="bg-white rounded-2xl shadow-sm border border-navy-100 overflow-hidden mb-6">
-    <div class="px-4 sm:px-5 py-3 sm:py-4 border-b border-navy-100 flex items-center justify-between">
-        <h2 class="font-bold text-navy-800 text-sm sm:text-base">Carte en direct</h2>
-        <span class="inline-flex items-center gap-2 text-[10px] sm:text-xs font-medium text-green-700 bg-green-50 px-2.5 py-1 rounded-full">
-            <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            Live
+    <!-- Badge -->
+    <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-4">
+        <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+        </span>
+        <span class="text-[10px] font-semibold text-white uppercase tracking-wide">
+            UniBus
         </span>
     </div>
 
-    <div class="aspect-[4/3] sm:aspect-video bg-gradient-to-br from-navy-100 via-navy-50 to-white relative overflow-hidden">
-        <!-- Grille de fond -->
-        <svg class="absolute inset-0 w-full h-full opacity-40" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#8aa3c9" stroke-width="0.5"/>
-                </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)"/>
-        </svg>
+    <!-- Titre -->
+    <h1 class="text-2xl font-extrabold text-white mb-2">
+        Bonjour {{ user.prenom }} 👋
+    </h1>
 
-        <!-- Trajet -->
-        <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" preserveAspectRatio="none">
-            <path d="M 40 260 Q 150 120 280 180 T 560 100"
-                  stroke="#1e3358" stroke-width="4" fill="none" stroke-linecap="round"/>
-        </svg>
+    <!-- Description -->
+    <p class="text-sm text-slate-300 leading-relaxed">
+        <span class="font-semibold text-white">UniBus</span> vous permet de suivre les bus de votre campus
+        en temps réel, de consulter les lignes disponibles et d'estimer votre temps d'attente —
+        directement depuis votre téléphone.
+    </p>
 
-        <!-- Bus animé -->
-        <div class="absolute" style="top: 42%; left: 46%;">
-            <div class="relative">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
-                <div class="relative w-10 h-10 rounded-full bg-navy-800 border-4 border-white shadow-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 17V7a3 3 0 013-3h10a3 3 0 013 3v10M4 17h16M4 17v2a1 1 0 001 1h2a1 1 0 001-1v-2m10 0v2a1 1 0 001 1h2a1 1 0 001-1v-2M8 7v6h8V7"/>
-                    </svg>
-                </div>
+</section>
+
+<!-- ============================================
+     COMMENT ÇA MARCHE
+============================================ -->
+<section>
+    <h2 class="text-base font-bold text-slate-800 mb-3">
+        Comment ça marche ?
+    </h2>
+
+    <div class="space-y-3">
+
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-map-location-dot text-slate-700"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800 text-sm">Ouvrez la carte</h3>
+                <p class="text-xs text-slate-500">Visualisez tous les bus autour de vous.</p>
             </div>
         </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-bus-simple text-slate-700"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800 text-sm">Choisissez votre bus</h3>
+                <p class="text-xs text-slate-500">Sélectionnez la ligne qui vous intéresse.</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-stopwatch text-slate-700"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800 text-sm">Suivez en direct</h3>
+                <p class="text-xs text-slate-500">Estimez votre temps d'attente.</p>
+            </div>
+        </div>
+
     </div>
-</div>
-
-<!-- Actions rapides (mobile-friendly) -->
-<div class="grid grid-cols-2 gap-3 sm:gap-4">
-    <a href="#" class="bg-navy-800 hover:bg-navy-900 active:scale-[0.98] transition rounded-2xl p-4 text-white flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-        </div>
-        <div>
-            <div class="font-semibold text-sm">Suivre un bus</div>
-            <div class="text-xs text-white/70">Temps réel</div>
-        </div>
-    </a>
-
-    <a href="#" class="bg-white hover:bg-navy-50 active:scale-[0.98] transition rounded-2xl p-4 text-navy-800 border border-navy-100 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-navy-50 flex items-center justify-center flex-shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-            </svg>
-        </div>
-        <div>
-            <div class="font-semibold text-sm">Voir les lignes</div>
-            <div class="text-xs text-gray-500">15 disponibles</div>
-        </div>
-    </a>
-</div>
+</section>
 
 {% endblock %}

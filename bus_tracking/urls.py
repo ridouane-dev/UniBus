@@ -2,6 +2,7 @@
 from django.urls import path
 from django.views.generic import TemplateView
 from . import views
+from django.contrib.auth.decorators import login_required
 
 app_name = 'bus_tracking'
 
@@ -23,14 +24,23 @@ urlpatterns = [
     # PAGES HTML (PUBLIQUES - SANS AUTH)
     # ============================================
     
-    # Page étudiante - Liste des bus (page d'accueil)
-    path('', TemplateView.as_view(template_name='core/student_list.html'), name='student_list'),
-    
+       # Page étudiante - Liste des bus (page d'accueil)
+    path('',
+         login_required(TemplateView.as_view(template_name='core/student_list.html')),
+         name='student_list'),
+
     # Page étudiante - Carte
-    path('student/map/', TemplateView.as_view(template_name='core/student_map.html'), name='student_map'),
+    path('student/map/',
+         login_required(TemplateView.as_view(template_name='core/student_map.html')),
+         name='student_map'),
+
     # Page chauffeur - Liste des bus
-    path('driver/', TemplateView.as_view(template_name='core/driver_list.html'), name='driver_list'),
-    
+    path('driver/',
+         login_required(TemplateView.as_view(template_name='core/driver_list.html')),
+         name='driver_list'),
+
     # Page chauffeur - Dashboard (après démarrage)
-    path('driver/dashboard/', TemplateView.as_view(template_name='core/driver_dashboard.html'), name='driver_dashboard'),
+    path('driver/dashboard/',
+         login_required(TemplateView.as_view(template_name='core/driver_dashboard.html')),
+         name='driver_dashboard'),
 ]

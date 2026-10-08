@@ -19,7 +19,9 @@
                     <i class="fa-solid fa-graduation-cap text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-black tracking-tight text-white leading-tight">Bonjour ! 👋</h1>
+                    <h1 class="text-lg font-black tracking-tight text-white leading-tight">
+                        Bonjour{% if user.is_authenticated %} {{ user.prenom|default:user.nom }}{% endif %} ! 👋
+                    </h1>
                     <p class="text-[11px] text-indigo-200/80 font-medium">Où souhaitez-vous aller aujourd'hui ?</p>
                 </div>
             </div>

@@ -104,21 +104,28 @@
     <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-50 bottom-nav-safe shadow-2xl">
         <div class="max-w-md mx-auto flex justify-around items-center h-16 px-1">
 
-            <!-- Tab 1 : Liste des bus -->
+            <!-- Tab 1 : Accueil (dashboard) -->
+            <a href="{% url 'user:dashboard' %}"
+               class="nav-item {% if request.path == '/dashboard/' %}active{% endif %} flex flex-col items-center justify-center flex-1 h-full gap-1">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[10px] tracking-tight">Accueil</span>
+            </a>
+
+            <!-- Tab 2 : Liste des bus -->
             <a href="/"
                class="nav-item {% if request.path == '/' %}active{% endif %} flex flex-col items-center justify-center flex-1 h-full gap-1">
                 <i class="fa-solid fa-bus-simple text-lg"></i>
                 <span class="text-[10px] tracking-tight">Bus</span>
             </a>
 
-            <!-- Tab 2 : Carte interactive -->
+            <!-- Tab 3 : Carte interactive -->
             <a href="#"
                class="nav-item {% if '/student/map/' in request.path %}active{% endif %} flex flex-col items-center justify-center flex-1 h-full gap-1">
                 <i class="fa-solid fa-map-location-dot text-lg"></i>
                 <span class="text-[10px] tracking-tight">Carte</span>
             </a>
 
-            <!-- Tab 3 : Déconnexion -->
+            <!-- Tab 4 : Déconnexion -->
             <form method="post" action="{% url 'user:logout' %}" class="flex-1 h-full">
                 {% csrf_token %}
                 <button type="submit"
