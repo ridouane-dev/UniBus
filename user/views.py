@@ -53,7 +53,7 @@ class RegisterView(TemplateView):
 @login_required
 def dashboard_view(request):
     """Page temporaire après connexion."""
-    return render(request, "core/dashboard.html")
+    return render(request, "user/dashboard.html")
 
 
 def logout_view(request):
