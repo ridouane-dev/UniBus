@@ -28,7 +28,7 @@ urlpatterns = [
     
     # Page étudiante - Carte
     path('student/map/', TemplateView.as_view(template_name='core/student_map.html'), name='student_map'),
-    
+    path("dashboard/", views.dashboard_view(), name="dashboard"),
     # Page chauffeur - Liste des bus
     path('driver/', TemplateView.as_view(template_name='core/driver_list.html'), name='driver_list'),
     

@@ -4,10 +4,19 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .models import BusLocation
 import json
+from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
+
 
 # ============================================
 # API - LISTE DES BUS (pour chauffeurs et étudiants)
 # ============================================
+@login_required
+def dashboard_view(request):
+    """Page temporaire après connexion."""
+    return render(request, "core/dashboard.html")
+
+
 
 def get_all_buses(request):
     """
