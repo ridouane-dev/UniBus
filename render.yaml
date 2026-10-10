@@ -1,0 +1,63 @@
+# ============================================
+# render.yaml — Infrastructure as Code
+# ============================================
+# Ce fichier décrit toute l'infra UniBus.
+# Render le lit automatiquement quand tu connectes ton repo.
+# ============================================
+
+services:
+
+  # ==========================================
+  # Base de données PostgreSQL managée
+  # ==========================================
+  - type: pserv
+    name: unibus-db
+    plan: free
+    databaseName: unibus
+    user: unibus_user
+    region: frankfurt
+    ipAllowList: []
+
+  # ==========================================
+  # Redis (Key Value) managé
+  # ==========================================
+  - type: redis
+    name: unibus-redis
+    plan: free
+    region: frankfurt
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+  # ==========================================
+  # Web Service (Django + Channels)
+  # ==========================================
+  - type: web
+    name: unibus-web
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: "./build.sh"
+    startCommand: "daphne -b 0.0.0.0 -p $PORT Bus.asgi:application"
+    healthCheckPath: /admin/login/
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true          # Render génère une clé auto
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://unibus-web.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: unibus-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: unibus-redis
+          property: connectionString
+      - key: EMAIL_BACKEND
+        value: "django.core.mail.backends.console.EmailBackend"

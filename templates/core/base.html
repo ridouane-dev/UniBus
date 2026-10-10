@@ -17,15 +17,28 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="UniBus">
 
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="{% static 'icons/icon-192x192.png' %}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'icons/icon-152x152.png' %}">
-    <link rel="apple-touch-icon" sizes="167x167" href="{% static 'icons/icon-152x152.png' %}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'icons/icon-192x192.png' %}">
+    <!-- ============================================
+         FAVICONS (RealFaviconGenerator)
+    ============================================ -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'icons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'icons/favicon-16x16.png' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'icons/favicon.svg' %}">
+    <link rel="shortcut icon" href="{% static 'icons/favicon.ico' %}">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'icons/icon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'icons/icon-16x16.png' %}">
+    <!-- ============================================
+         APPLE TOUCH ICONS (iOS)
+    ============================================ -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'icons/ios/apple-touch-icon-180x180.png' %}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{% static 'icons/ios/apple-touch-icon-167x167.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'icons/ios/apple-touch-icon-152x152.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'icons/ios/apple-touch-icon-120x120.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'icons/ios/apple-touch-icon.png' %}">
+
+    <!-- ============================================
+         ANDROID / PWA ICONS
+    ============================================ -->
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'icons/android/launchericon-192x192.png' %}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{% static 'icons/android/launchericon-512x512.png' %}">
 
     <!-- TailwindCSS + DaisyUI CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -106,7 +119,7 @@
 
             <!-- Tab 1 : Accueil (dashboard) -->
             <a href="{% url 'user:dashboard' %}"
-               class="nav-item {% if request.path == '/dashboard/' %}active{% endif %} flex flex-col items-center justify-center flex-1 h-full gap-1">
+               class="nav-item {% if request.path == '/user/dashboard/' %}active{% endif %} flex flex-col items-center justify-center flex-1 h-full gap-1">
                 <i class="fa-solid fa-house text-lg"></i>
                 <span class="text-[10px] tracking-tight">Accueil</span>
             </a>
@@ -126,7 +139,7 @@
             </a>
 
             <!-- Tab 4 : Déconnexion -->
-            <form method="post" action="{% url 'user:logout' %}" class="flex-1 h-full">
+            <form method="post" action="{% url 'user:logout' %}" id="logoutForm" class="flex-1 h-full">
                 {% csrf_token %}
                 <button type="submit"
                         class="nav-item flex flex-col items-center justify-center w-full h-full gap-1 text-rose-400 hover:text-rose-300">
@@ -138,6 +151,50 @@
         </div>
     </nav>
 
+    <!-- ============================================
+         POP-UP INSTALLATION PWA
+    ============================================ -->
+    <div id="pwaInstallBanner"
+         class="hidden fixed bottom-20 left-4 right-4 sm:left-auto sm:right-4 sm:w-96 z-[9998]
+                bg-slate-900 text-white rounded-2xl shadow-2xl border border-slate-700
+                p-4 slide-up max-w-md mx-auto">
+
+        <div class="flex items-start gap-3">
+            <!-- Icône -->
+            <div class="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700
+                        flex items-center justify-center shadow-lg">
+                <i class="fa-solid fa-bus-simple text-white text-xl"></i>
+            </div>
+
+            <!-- Texte -->
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-sm">Installer UniBus</h3>
+                <p class="text-xs text-slate-400 mt-0.5 leading-snug">
+                    Accès rapide + suivi temps réel depuis votre écran d'accueil.
+                </p>
+
+                <!-- Boutons -->
+                <div class="flex gap-2 mt-3">
+                    <button id="pwaInstallBtn"
+                            class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95
+                                   text-white text-xs font-bold py-2 px-3 rounded-lg transition">
+                        <i class="fa-solid fa-download mr-1"></i> Installer
+                    </button>
+                    <button id="pwaDismissBtn"
+                            class="px-3 py-2 text-xs font-semibold text-slate-400 hover:text-white transition">
+                        Plus tard
+                    </button>
+                </div>
+            </div>
+
+            <!-- Fermer -->
+            <button id="pwaCloseBtn"
+                    class="shrink-0 text-slate-500 hover:text-white transition -mt-1 -mr-1 p-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Toast container -->
     <div id="toast-container" class="fixed top-4 right-4 left-4 sm:left-auto sm:w-80 z-[9999] space-y-2 pointer-events-none"></div>
 
@@ -145,6 +202,46 @@
          SCRIPTS
     ============================================ -->
     <script>
+        /* ============================================
+           TOAST SYSTEM (déclaré en premier pour être dispo partout)
+        ============================================ */
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const colors = {
+                success: 'bg-emerald-600 text-white shadow-emerald-200',
+                error:   'bg-rose-600 text-white shadow-rose-200',
+                warning: 'bg-amber-500 text-white shadow-amber-200',
+                info:    'bg-indigo-600 text-white shadow-indigo-200'
+            };
+
+            const icons = {
+                success: 'fa-circle-check',
+                error:   'fa-circle-xmark',
+                warning: 'fa-triangle-exclamation',
+                info:    'fa-circle-info'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `${colors[type]} px-5 py-3.5 rounded-2xl shadow-lg slide-up flex items-center gap-3 text-xs font-semibold pointer-events-auto border border-white/10`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icons[type]} text-base"></i>
+                <span class="flex-1">${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transition = 'opacity .3s, transform .3s';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3200);
+        }
+
+        // Exposer globalement (utile pour les autres scripts)
+        window.showToast = showToast;
+
         /* ============================================
            SERVICE WORKER
         ============================================ */
@@ -182,42 +279,209 @@
             showToast('⚠️ Mode hors-ligne', 'warning');
         });
 
-        /* ============================================
-           TOAST SYSTEM
-        ============================================ */
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            if (!container) return;
-
-            const colors = {
-                success: 'bg-emerald-600 text-white shadow-emerald-200',
-                error:   'bg-rose-600 text-white shadow-rose-200',
-                warning: 'bg-amber-500 text-white shadow-amber-200',
-                info:    'bg-indigo-600 text-white shadow-indigo-200'
-            };
-
-            const icons = {
-                success: 'fa-circle-check',
-                error:   'fa-circle-xmark',
-                warning: 'fa-triangle-exclamation',
-                info:    'fa-circle-info'
-            };
-
-            const toast = document.createElement('div');
-            toast.className = `${colors[type]} px-5 py-3.5 rounded-2xl shadow-lg slide-up flex items-center gap-3 text-xs font-semibold pointer-events-auto border border-white/10`;
-            toast.innerHTML = `
-                <i class="fa-solid ${icons[type]} text-base"></i>
-                <span class="flex-1">${message}</span>
-            `;
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.transition = 'opacity .3s, transform .3s';
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-10px)';
-                setTimeout(() => toast.remove(), 300);
-            }, 3200);
+        // Vérifier l'état initial
+        if (!navigator.onLine) {
+            document.getElementById('offlineIndicator')?.classList.remove('hidden');
         }
+
+        /* ============================================
+           NETTOYAGE DU CACHE À LA DÉCONNEXION
+        ============================================ */
+        document.getElementById('logoutForm')?.addEventListener('submit', () => {
+            if ('caches' in window) {
+                caches.keys().then((keys) => {
+                    keys.forEach((key) => caches.delete(key));
+                });
+            }
+        });
+
+        /* ============================================
+           INSTALLATION PWA — Version persistante
+           Le pop-up réapparaît à chaque session
+           jusqu'à ce que l'utilisateur installe.
+        ============================================ */
+        (function () {
+            'use strict';
+
+            const SESSION_DISMISS_KEY = 'unibus_pwa_dismissed_session'; // ← session seulement
+            const INSTALLED_KEY       = 'unibus_pwa_installed';         // ← permanent
+            const POPUP_DELAY_MS      = 3000;   // 3s après le chargement
+            const REPEAT_DELAY_MS     = 8000;   // retry après 8s si l'event n'arrive pas
+
+            let deferredPrompt = null;
+            let popupShown     = false;
+            let retryTimer     = null;
+
+            const banner     = document.getElementById('pwaInstallBanner');
+            const installBtn = document.getElementById('pwaInstallBtn');
+            const dismissBtn = document.getElementById('pwaDismissBtn');
+            const closeBtn   = document.getElementById('pwaCloseBtn');
+
+            if (!banner) {
+                console.warn('⚠️ [PWA] Banner introuvable dans le DOM');
+                return;
+            }
+
+            /* ----------------------------------------
+               1) Déjà installée ? (standalone OU flag)
+            ---------------------------------------- */
+            const isStandalone =
+                window.matchMedia('(display-mode: standalone)').matches ||
+                window.navigator.standalone === true ||
+                document.referrer.includes('android-app://');
+
+            const wasInstalled = localStorage.getItem(INSTALLED_KEY) === '1';
+
+            if (isStandalone || wasInstalled) {
+                console.log('✅ [PWA] App déjà installée → pop-up désactivé');
+                localStorage.setItem(INSTALLED_KEY, '1');
+                return;
+            }
+
+            /* ----------------------------------------
+               2) L'utilisateur a-t-il déjà fermé
+                  le pop-up DANS CETTE SESSION ?
+            ---------------------------------------- */
+            const sessionDismissed = sessionStorage.getItem(SESSION_DISMISS_KEY) === '1';
+
+            if (sessionDismissed) {
+                console.log('ℹ️ [PWA] Pop-up ignoré pour cette session');
+                return;
+            }
+
+            /* ----------------------------------------
+               3) Afficher le pop-up
+            ---------------------------------------- */
+            function showBanner() {
+                if (popupShown) return;
+                if (localStorage.getItem(INSTALLED_KEY) === '1') return;
+                if (sessionStorage.getItem(SESSION_DISMISS_KEY) === '1') return;
+                if (window.matchMedia('(display-mode: standalone)').matches) return;
+
+                banner.classList.remove('hidden');
+                popupShown = true;
+                console.log('📲 [PWA] Pop-up affiché');
+            }
+
+            /* ----------------------------------------
+               4) Cacher pour la session courante
+            ---------------------------------------- */
+            function dismissForSession() {
+                sessionStorage.setItem(SESSION_DISMISS_KEY, '1');
+                banner.classList.add('hidden');
+                popupShown = false;
+                clearTimeout(retryTimer);
+                console.log('⏸️ [PWA] Pop-up fermé pour cette session');
+            }
+
+            /* ----------------------------------------
+               5) Marquer installé définitivement
+            ---------------------------------------- */
+            function markAsInstalled() {
+                localStorage.setItem(INSTALLED_KEY, '1');
+                sessionStorage.removeItem(SESSION_DISMISS_KEY);
+                banner.classList.add('hidden');
+                clearTimeout(retryTimer);
+                console.log('🎉 [PWA] App marquée comme installée');
+            }
+
+            /* ----------------------------------------
+               6) Événement natif beforeinstallprompt
+            ---------------------------------------- */
+            window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('📲 [PWA] beforeinstallprompt déclenché');
+                e.preventDefault();
+                deferredPrompt = e;
+                clearTimeout(retryTimer);
+
+                // Afficher après un petit délai (laisser la page se charger)
+                setTimeout(showBanner, POPUP_DELAY_MS);
+            });
+
+            /* ----------------------------------------
+               7) Si l'event n'arrive pas → iOS Safari
+                  ou déjà installé → fallback
+            ---------------------------------------- */
+            retryTimer = setTimeout(() => {
+                if (!deferredPrompt && !popupShown) {
+                    console.log('🔁 [PWA] Tentative d\'affichage différée...');
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+                    if (isIOS && isSafari) {
+                        console.log('📱 [PWA] iOS Safari → guide manuel');
+                        const h3 = banner.querySelector('h3');
+                        const p  = banner.querySelector('p');
+                        if (h3) h3.innerHTML = '<i class="fa-brands fa-apple mr-1"></i> Installer sur iOS';
+                        if (p)  p.innerHTML =
+                            'Appuyez sur <i class="fa-solid fa-arrow-up-from-bracket"></i> puis <b>« Sur l\'écran d\'accueil »</b>.';
+                        if (installBtn) installBtn.style.display = 'none';
+                        showBanner();
+                    } else {
+                        console.log('ℹ️ [PWA] beforeinstallprompt non disponible');
+                    }
+                }
+            }, REPEAT_DELAY_MS);
+
+            /* ----------------------------------------
+               8) Bouton "Installer"
+            ---------------------------------------- */
+            installBtn?.addEventListener('click', async () => {
+                if (!deferredPrompt) {
+                    showToast('ℹ️ Installation non disponible sur ce navigateur', 'info');
+                    return;
+                }
+
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log('👤 [PWA] Choix utilisateur :', outcome);
+
+                if (outcome === 'accepted') {
+                    markAsInstalled();
+                    showToast('🎉 UniBus installée avec succès !', 'success');
+                } else {
+                    dismissForSession();
+                    showToast('Installation annulée', 'info');
+                }
+
+                deferredPrompt = null;
+            });
+
+            /* ----------------------------------------
+               9) Boutons "Plus tard" et "Fermer"
+            ---------------------------------------- */
+            dismissBtn?.addEventListener('click', dismissForSession);
+            closeBtn?.addEventListener('click', dismissForSession);
+
+            /* ----------------------------------------
+               10) Confirmation après installation
+            ---------------------------------------- */
+            window.addEventListener('appinstalled', () => {
+                console.log('🎉 [PWA] appinstalled');
+                markAsInstalled();
+                showToast('🎉 UniBus installée avec succès !', 'success');
+            });
+
+            /* ----------------------------------------
+               11) Réafficher le pop-up quand la page
+                   redevient visible (retour sur l'app)
+            ---------------------------------------- */
+            document.addEventListener('visibilitychange', () => {
+                if (
+                    document.visibilityState === 'visible' &&
+                    !deferredPrompt &&
+                    !popupShown &&
+                    !sessionStorage.getItem(SESSION_DISMISS_KEY) &&
+                    !localStorage.getItem(INSTALLED_KEY)
+                ) {
+                    setTimeout(() => {
+                        if (!popupShown && deferredPrompt) showBanner();
+                    }, 2000);
+                }
+            });
+
+            console.log('🔵 [PWA] Module d\'installation initialisé');
+        })();
     </script>
 
     {% block extra_js %}{% endblock %}

@@ -1,0 +1,35 @@
+# Normaliser automatiquement les fins de ligne
+* text=auto
+
+# Scripts shell → TOUJOURS en LF (pour Linux/Mac)
+*.sh   text eol=lf
+*.bash text eol=lf
+
+# Scripts Windows → CRLF
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# Python → LF
+*.py   text eol=lf
+*.pyi  text eol=lf
+
+# Fichiers qui ne doivent PAS être modifiés
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.eot  binary
+*.zip  binary
+*.gz   binary
+
+# Fichiers de config / docs (CRLF toléré sur Windows)
+*.md   text
+*.txt  text
+*.yml  text
+*.yaml text
+*.json text
