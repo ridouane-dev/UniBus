@@ -47,10 +47,6 @@ if RENDER_EXTERNAL_HOSTNAME:
 # APPLICATIONS
 # ============================================
 INSTALLED_APPS = [
-    # ASGI / Channels EN PREMIER (obligatoire)
-    'daphne',
-    'channels',
-
     # Django
     'django.contrib.admin',
     'django.contrib.auth',
@@ -111,7 +107,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 
 # ============================================
-# URLS / TEMPLATES / WSGI-ASGI
+# URLS / TEMPLATES / WSGI
 # ============================================
 ROOT_URLCONF = 'Bus.urls'
 
@@ -131,7 +127,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Bus.wsgi.application'
-ASGI_APPLICATION = 'Bus.asgi.application'   # Pour Channels
 
 
 # ============================================
@@ -200,23 +195,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # ============================================
-# REDIS + CHANNELS (WebSockets)
-# ============================================
-REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0')
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [REDIS_URL],
-            "capacity": 1500,
-            "expiry": 10,
-        },
-    },
-}
-
-
-# ============================================
 # EMAIL
 # ============================================
 EMAIL_BACKEND = os.getenv(
@@ -235,7 +213,14 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+
+    # HSTS désactivé temporairement pour le débogage.
+    # À RÉACTIVER une fois que tout fonctionne en production :
+    # SECURE_HSTS_SECONDS = 31536000
+    # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+
     X_FRAME_OPTIONS = 'DENY'
