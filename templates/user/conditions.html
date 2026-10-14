@@ -1,0 +1,48 @@
+{% extends "user/base_auth.html" %}
+
+{% block title %}Conditions d'utilisation — 
+UniBus{% endblock %}
+{% block hero_title %}Conditions d'utilisation 📜{% endblock %}
+{% block hero_subtitle %}Les règles d'utilisation de la plateforme 
+UniBus.{% endblock %}
+
+{% block content %}
+<div class="prose prose-navy max-w-none">
+    <h2 class="text-2xl font-extrabold text-navy-800 mb-4">Conditions générales d'utilisation</h2>
+    <p class="text-sm text-gray-500 mb-6">Dernière mise à jour : {% now "j F Y" %}</p>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">1. Objet</h3>
+    <p class="text-gray-700 mb-4
+    UniBus est une plateforme de suivi de bus en temps réel. En créant un compte,
+        vous acceptez les présentes conditions d'utilisation.
+    </p>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">2. Compte utilisateur</h3>
+    <p class="text-gray-700 mb-4">
+        Vous vous engagez à fournir des informations exactes et à garder votre mot de passe confidentiel.
+        Toute activité effectuée depuis votre compte est sous votre responsabilité.
+    </p>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">3. Utilisation du service</h3>
+    <p class="text-gray-700 mb-4">
+        Le service est fourni « tel quel ». Nous nous efforçons d'assurer la disponibilité et l'exactitude
+        des informations de suivi, sans garantie absolue.
+    </p>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">4. Données personnelles</h3>
+    <p class="text-gray-700 mb-4">
+        Le traitement de vos données est détaillé dans notre
+        <a href="{% url 'user:confidentialite' %}" class="text-navy-700 underline">politique de confidentialité</a>.
+    </p>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">5. Résiliation</h3>
+    <p class="text-gray-700 mb-4">
+        Nous nous réservons le droit de suspendre ou supprimer tout compte ne respectant pas ces conditions.
+    </p>
+
+    <a href="{% url 'user:register' %}"
+       class="inline-flex items-center gap-2 mt-6 text-navy-700 hover:text-navy-900 font-semibold">
+        ← Retour à l'inscription
+    </a>
+</div>
+{% endblock %}

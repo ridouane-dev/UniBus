@@ -1,0 +1,55 @@
+{% extends "user/base_auth.html" %}
+
+{% block title %}Politique de confidentialité — BusLoc{% endblock %}
+{% block hero_title %}Politique de confidentialité 🔒{% endblock %}
+{% block hero_subtitle %}Comment nous protégeons vos données personnelles.{% endblock %}
+
+{% block content %}
+<div class="prose prose-navy max-w-none">
+    <h2 class="text-2xl font-extrabold text-navy-800 mb-4">Politique de confidentialité</h2>
+    <p class="text-sm text-gray-500 mb-6">Dernière mise à jour : {% now "j F Y" %}</p>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">1. Données collectées</h3>
+    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
+        <li>Nom complet</li>
+        <li>Numéro de téléphone</li>
+        <li>Date d'acceptation des conditions d'utilisation</li>
+        <li>Données de navigation (logs techniques)</li>
+    </ul>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">2. Finalité du traitement</h3>
+    <p class="text-gray-700 mb-4">
+        Vos données servent à :
+    </p>
+    <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
+        <li>Créer et gérer votre compte UniBus</li>
+        <li>Vous permettre de suivre vos bus et vos lignes</li>
+        <li>Assurer la sécurité de la plateforme</li>
+        <li>Respecter nos obligations légales</li>
+    </ul>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">3. Conservation</h3>
+    <p class="text-gray-700 mb-4">
+        Vos données sont conservées tant que votre compte est actif, puis archivées pendant la durée
+        légale obligatoire.
+    </p>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">4. Vos droits</h3>
+    <p class="text-gray-700 mb-4">
+        Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, d'effacement,
+        de portabilité et d'opposition. Pour exercer ces droits, contactez-nous à
+        <a href="mailto:contact@busloc.com" class="text-navy-700 underline">contact@busloc.com</a>.
+    </p>
+
+    <h3 class="text-lg font-bold text-navy-800 mt-6 mb-2">5. Cookies</h3>
+    <p class="text-gray-700 mb-4">
+        UniBus utilise uniquement des cookies strictement nécessaires au fonctionnement
+        (session, authentification, CSRF). Aucun cookie publicitaire n'est utilisé.
+    </p>
+
+    <a href="{% url 'user:register' %}"
+       class="inline-flex items-center gap-2 mt-6 text-navy-700 hover:text-navy-900 font-semibold">
+        ← Retour à l'inscription
+    </a>
+</div>
+{% endblock %}

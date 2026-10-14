@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django.utils import timezone    
 
 from .forms import LoginForm, RegisterForm
 
@@ -41,13 +42,39 @@ class RegisterView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         form = RegisterForm(request.POST)
+
+        # ✅ Récupération de la case à cocher
+        accepte_conditions = request.POST.get("terms") == "on"
+
+        if not accepte_conditions:
+            messages.error(
+                request,
+                "Vous devez accepter les conditions d'utilisation pour créer un compte."
+            )
+            return render(request, self.template_name, {"form": form})
+
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+
+            # ✅ Enregistrement de la preuve d'acceptation
+            user.accepte_conditions = True
+            user.date_acceptation_conditions = timezone.now()
+            user.save()
+
             login(request, user)
             messages.success(request, "Votre compte a été créé avec succès !")
             return redirect("user:dashboard")
 
         return render(request, self.template_name, {"form": form})
+
+
+from django.shortcuts import render
+
+def conditions_view(request):
+    return render(request, 'user/conditions.html')
+
+def confidentialite_view(request):
+    return render(request, 'user/confidentialite.html')
 
 
 @login_required

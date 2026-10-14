@@ -31,15 +31,15 @@ class RegisterForm(forms.ModelForm):
         widgets = {
             "nom": forms.TextInput(attrs={
                 "class": "w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition",
-                "placeholder": "Dupont",
+                "placeholder": "Entrer votre nom",
             }),
             "prenom": forms.TextInput(attrs={
                 "class": "w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition",
-                "placeholder": "Jean",
+                "placeholder": "Entrer votre prenom",
             }),
             "numero_tel": forms.TextInput(attrs={
                 "class": "w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition",
-                "placeholder": "+227 90 00 00 00",
+                "placeholder": "90 00 00 00",
                 "autocomplete": "tel",
             }),
         }
@@ -86,7 +86,7 @@ class LoginForm(forms.Form):
         label="Numéro de téléphone",
         widget=forms.TextInput(attrs={
             "class": "w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition",
-            "placeholder": "+227 90 00 00 00",
+            "placeholder": "90 00 00 00",
             "autocomplete": "tel",
         }),
     )
