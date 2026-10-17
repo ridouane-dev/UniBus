@@ -25,6 +25,7 @@ urlpatterns = [
     # ============================================
     
        # Page étudiante - Liste des bus (page d'accueil)
+       
     path('',
          login_required(TemplateView.as_view(template_name='core/student_list.html')),
          name='student_list'),
